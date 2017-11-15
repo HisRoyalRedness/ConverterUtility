@@ -1,0 +1,72 @@
+﻿<Window x:Class="HisRoyalRedness.com.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HisRoyalRedness.com"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+
+    <Window.DataContext>
+        <local:ApplicationModel />
+    </Window.DataContext>
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <local:DateTimeConverter x:Key="DateTime" />
+            <local:DateTimeZoneConverter x:Key="DateTimeZone" />
+        </ResourceDictionary>
+    </Window.Resources>
+    
+    <Grid>
+        <TabControl ItemsSource="{Binding TabModels}">
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Header}" />
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+
+            <TabControl.Resources>
+                <DataTemplate DataType="{x:Type local:DateTimeTabModel}">
+                    <DockPanel>
+                        <DockPanel
+                            Margin="0,5"
+                            DockPanel.Dock="Bottom">
+                            <CheckBox 
+                                DockPanel.Dock="Left"
+                                Content="Use current time"
+                                IsChecked="{Binding UseCurrentTime}"
+                                />
+                            <Grid />
+                        </DockPanel>
+                        
+                        <ListView
+                            Grid.IsSharedSizeScope="True"
+                            ItemsSource="{Binding DateTimeInstances}" />
+                    </DockPanel>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type local:DateTimeInstanceModel}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition SharedSizeGroup="DateTime" />
+                            <ColumnDefinition SharedSizeGroup="TimeZone" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Margin="0,0,10,0"
+                            Text="{Binding ZonedDateTime, Converter={StaticResource DateTime}}" 
+                            />
+                        <TextBlock
+                            Margin="0,0,10,0"
+                            Grid.Column="1"
+                            Text="{Binding DateTimeZone, Converter={StaticResource DateTimeZone}}" 
+                            />
+                    </Grid>                    
+                </DataTemplate>
+            </TabControl.Resources>
+        </TabControl>
+    </Grid>
+</Window>
