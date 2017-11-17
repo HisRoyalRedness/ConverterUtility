@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HisRoyalRedness.com"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
 
@@ -13,7 +14,8 @@
 
     <Window.Resources>
         <ResourceDictionary>
-            <local:DateTimeConverter x:Key="DateTime" />
+            <local:LocalTimeConverter x:Key="LocalTime" />
+            <local:OffsetConverter x:Key="Offset" />
             <local:DateTimeZoneConverter x:Key="DateTimeZone" />
         </ResourceDictionary>
     </Window.Resources>
@@ -34,19 +36,56 @@
                             DockPanel.Dock="Bottom">
                             <CheckBox 
                                 DockPanel.Dock="Left"
-                                Content="Use current time"
-                                IsChecked="{Binding UseCurrentTime}"
+                                Content="Auto update"
+                                IsChecked="{Binding Instant.AutoUpdate}"
                                 />
                             <Grid />
                         </DockPanel>
                         
                         <ListView
                             Grid.IsSharedSizeScope="True"
-                            ItemsSource="{Binding DateTimeInstances}" />
+                            ItemsSource="{Binding InstanceModels}" />
                     </DockPanel>
                 </DataTemplate>
 
-                <DataTemplate DataType="{x:Type local:DateTimeInstanceModel}">
+                <DataTemplate DataType="{x:Type local:TimeInstanceModel}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition SharedSizeGroup="DateTime" />
+                            <ColumnDefinition Width="200"  SharedSizeGroup="TimeZone" />
+                            <ColumnDefinition SharedSizeGroup="Offset" />
+                        </Grid.ColumnDefinitions>
+
+                        <xctk:DateTimePicker 
+                            Margin="0,0,10,0"
+                            Value="{Binding LocalTime}"
+                            />
+
+                        <!--<TextBox
+                            TextAlignment="Right"
+                            Margin="0,0,10,0"
+                            Text="{Binding LocalTime, Converter={StaticResource LocalTime}}" 
+                            />-->
+
+                        <ComboBox
+                            Margin="0,0,10,0"
+                            Grid.Column="1"
+                            ItemsSource="{Binding BclTimeZones}"
+                            SelectedItem="{Binding TimeZone}"
+                            />
+
+                        <TextBlock
+                            Margin="0,0,10,0"
+                            Grid.Column="2"
+                            Text="{Binding LocalTimeOffset, Converter={StaticResource Offset}}" 
+                            />
+                    </Grid>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type local:UtcInstanceModel}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition />
@@ -56,15 +95,38 @@
                             <ColumnDefinition SharedSizeGroup="TimeZone" />
                         </Grid.ColumnDefinitions>
                         <TextBlock
+                            TextAlignment="Right"
                             Margin="0,0,10,0"
-                            Text="{Binding ZonedDateTime, Converter={StaticResource DateTime}}" 
+                            Text="{Binding LocalTime, Converter={StaticResource LocalTime}}" 
                             />
                         <TextBlock
                             Margin="0,0,10,0"
                             Grid.Column="1"
-                            Text="{Binding DateTimeZone, Converter={StaticResource DateTimeZone}}" 
+                            Text="UTC" 
                             />
-                    </Grid>                    
+                    </Grid>
+                </DataTemplate>                
+                
+                <DataTemplate DataType="{x:Type local:EpochInstanceModel}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition SharedSizeGroup="DateTime" />
+                            <ColumnDefinition SharedSizeGroup="TimeZone" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            TextAlignment="Right"
+                            Margin="0,0,10,0"
+                            Text="{Binding EpochSeconds}" 
+                            />
+                        <TextBlock
+                            Margin="0,0,10,0"
+                            Grid.Column="1"
+                            Text="Epoch" 
+                            />
+                    </Grid>
                 </DataTemplate>
             </TabControl.Resources>
         </TabControl>

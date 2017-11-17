@@ -14,16 +14,17 @@ namespace HisRoyalRedness.com
     {
         public DateTimeTabModel() : base("Date/Time")
         {
-            DateTimeInstances.Add(new DateTimeInstanceModel(Instant));
-            DateTimeInstances.Add(new DateTimeInstanceModel(Instant, DateTimeZone.Utc));
+            InstanceModels.Add(new UtcInstanceModel(Instant));
+            InstanceModels.Add(new TimeInstanceModel(Instant));
+            InstanceModels.Add(new TimeInstanceModel(Instant, DateTimeZoneProviders.Tzdb.GetZoneOrNull("Africa/Johannesburg")));
+            InstanceModels.Add(new EpochInstanceModel(Instant));
 
-            _tickTimer = new DispatcherTimer();
-            _tickTimer.Interval = TimeSpan.FromMilliseconds(200);
-            _tickTimer.Tick += (o, e) => Instant.Refresh();
+            var tzdbZones = DateTimeZoneProviders.Tzdb.GetZones().ToList();
+            var bclZones = DateTimeZoneProviders.Bcl.GetZones().ToList();
+            Console.WriteLine();
         }
 
-        public ObservableCollection<DateTimeInstanceModel> DateTimeInstances { get; } = new ObservableCollection<DateTimeInstanceModel>();
-
+        public ObservableCollection<ITimeInstanceModel> InstanceModels { get; } = new ObservableCollection<ITimeInstanceModel>();        
 
         public CommonInstant Instant
         {
@@ -31,20 +32,19 @@ namespace HisRoyalRedness.com
             set { SetProperty(ref _instant, value); }
         }
         CommonInstant _instant = new CommonInstant();
-
-
-        public bool UseCurrentTime
-        {
-            get { return _useCurrentTime; }
-            set { SetProperty(ref _useCurrentTime, value, uct => _tickTimer.IsEnabled = uct); }
-        }
-        bool _useCurrentTime = false;
-
-        readonly DispatcherTimer _tickTimer;
     }
 
     public class CommonInstant : NotifyBase
     {
+        public CommonInstant()
+        {
+            _tickTimer = new DispatcherTimer()
+            {
+                Interval = TimeSpan.FromMilliseconds(200)
+            };
+            _tickTimer.Tick += (o, e) => Update();
+        }
+
         public Instant Instant
         {
             get { return _instant; }
@@ -52,9 +52,24 @@ namespace HisRoyalRedness.com
         }
         Instant _instant = SystemClock.Instance.GetCurrentInstant();
 
-        public void Refresh()
+        public bool AutoUpdate
+        {
+            get { return _autoUpdate; }
+            set { SetProperty(ref _autoUpdate, value, au => _tickTimer.IsEnabled = au); }
+        }
+        bool _autoUpdate = false;
+
+        public void Update()
         {
             Instant = SystemClock.Instance.GetCurrentInstant();
         }
+
+        readonly DispatcherTimer _tickTimer;
+    }
+
+    internal static class TabModelExtensions
+    {
+        internal static IEnumerable<DateTimeZone> GetZones(this IDateTimeZoneProvider provider)
+            => provider.Ids.Select(id => provider.GetZoneOrNull(id)).Where(z => z != null);
     }
 }

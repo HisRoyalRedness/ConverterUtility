@@ -81,11 +81,24 @@ namespace HisRoyalRedness.com
     }
     #endregion PreferenceConverterBase
 
-    public class DateTimeConverter : PreferenceConverterBase<ZonedDateTime>
+    public class LocalTimeConverter : PreferenceConverterBase<LocalDateTime>
     {
-        protected override string Convert(ZonedDateTime value, object parameter, CultureInfo culture)
+        protected override string Convert(LocalDateTime value, object parameter, CultureInfo culture)
         {
             return value.ToString(Preference.DateTimeFormat, culture.DateTimeFormat);
+        }
+
+        protected override LocalDateTime ConvertBack(string value, object parameter, CultureInfo culture)
+        {
+            return SystemClock.Instance.GetCurrentInstant().InUtc().LocalDateTime;
+        }
+    }
+
+    public class OffsetConverter : PreferenceConverterBase<Offset>
+    {
+        protected override string Convert(Offset value, object parameter, CultureInfo culture)
+        {
+            return value.ToString(Preference.OffsetFormat, culture.DateTimeFormat);
         }
     }
 

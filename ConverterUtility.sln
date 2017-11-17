@@ -7,7 +7,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConverterUtility", "Convert
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConverterUtility.Test", "ConverterUtility.Test\ConverterUtility.Test.csproj", "{3D89EDFC-2C00-48F9-851A-259160CFB19B}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CSharpCommon", "..\Common\C#\CSharpCommon.shproj", "{78A169B1-D3FF-429D-B081-FB65DC11C637}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\Common\C#\CSharpCommon.projitems*{6f86f729-9e33-4a53-8b4d-90f932289979}*SharedItemsImports = 4
+		..\Common\C#\CSharpCommon.projitems*{78a169b1-d3ff-429d-b081-fb65dc11c637}*SharedItemsImports = 13
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -18,7 +24,6 @@ Global
 		{6F86F729-9E33-4A53-8B4D-90F932289979}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F86F729-9E33-4A53-8B4D-90F932289979}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3D89EDFC-2C00-48F9-851A-259160CFB19B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3D89EDFC-2C00-48F9-851A-259160CFB19B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D89EDFC-2C00-48F9-851A-259160CFB19B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D89EDFC-2C00-48F9-851A-259160CFB19B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
