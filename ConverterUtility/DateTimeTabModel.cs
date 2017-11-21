@@ -14,62 +14,19 @@ namespace HisRoyalRedness.com
     {
         public DateTimeTabModel() : base("Date/Time")
         {
-            InstanceModels.Add(new UtcInstanceModel(Instant));
-            InstanceModels.Add(new TimeInstanceModel(Instant));
-            InstanceModels.Add(new TimeInstanceModel(Instant, DateTimeZoneProviders.Tzdb.GetZoneOrNull("Africa/Johannesburg")));
-            InstanceModels.Add(new EpochInstanceModel(Instant));
-
-            var tzdbZones = DateTimeZoneProviders.Tzdb.GetZones().ToList();
-            var bclZones = DateTimeZoneProviders.Bcl.GetZones().ToList();
-            Console.WriteLine();
+            InstanceModels.Add(new UtcInstanceModel());
+            InstanceModels.Add(new EpochInstanceModel());
+            InstanceModels.Add(new TimeInstanceModel());
+            //InstanceModels.Add(new TimeInstanceModel(DateTimeZoneProviders.Tzdb.GetZoneOrNull("Africa/Johannesburg"), RemoveInstance));
+            InstanceModels.Add(new PlaceholderInstanceModel(AddInstance));
         }
 
-        public ObservableCollection<ITimeInstanceModel> InstanceModels { get; } = new ObservableCollection<ITimeInstanceModel>();        
+        void AddInstance() => InstanceModels.Insert(InstanceModels.Count - 1, new TimeInstanceModel(RemoveInstance));
+        void RemoveInstance(TimeInstanceModel model) => InstanceModels.Remove(model);
 
-        public CommonInstant Instant
-        {
-            get { return _instant   ; }
-            set { SetProperty(ref _instant, value); }
-        }
-        CommonInstant _instant = new CommonInstant();
-    }
+        public ObservableCollection<ITimeInstanceModel> InstanceModels { get; } = new ObservableCollection<ITimeInstanceModel>();
 
-    public class CommonInstant : NotifyBase
-    {
-        public CommonInstant()
-        {
-            _tickTimer = new DispatcherTimer()
-            {
-                Interval = TimeSpan.FromMilliseconds(200)
-            };
-            _tickTimer.Tick += (o, e) => Update();
-        }
-
-        public Instant Instant
-        {
-            get { return _instant; }
-            set { SetProperty(ref _instant, value); }
-        }
-        Instant _instant = SystemClock.Instance.GetCurrentInstant();
-
-        public bool AutoUpdate
-        {
-            get { return _autoUpdate; }
-            set { SetProperty(ref _autoUpdate, value, au => _tickTimer.IsEnabled = au); }
-        }
-        bool _autoUpdate = false;
-
-        public void Update()
-        {
-            Instant = SystemClock.Instance.GetCurrentInstant();
-        }
-
-        readonly DispatcherTimer _tickTimer;
-    }
-
-    internal static class TabModelExtensions
-    {
-        internal static IEnumerable<DateTimeZone> GetZones(this IDateTimeZoneProvider provider)
-            => provider.Ids.Select(id => provider.GetZoneOrNull(id)).Where(z => z != null);
+        public CommonInstant Instant => _instant;
+        readonly CommonInstant _instant = CommonInstant.Default;
     }
 }

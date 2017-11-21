@@ -14,6 +14,8 @@ namespace HisRoyalRedness.com
     {
         public ConverterPreference()
         {
+            var g1 = DateTime.MaxValue;
+            var g2 = DateTime.MinValue;
             DateTimeFormat = $"{DateFormat} {TimeFormat}";
         }
 
@@ -92,6 +94,17 @@ namespace HisRoyalRedness.com
         {
             return SystemClock.Instance.GetCurrentInstant().InUtc().LocalDateTime;
         }
+    }
+
+    public class LocalTimeToDateTimeConverter : PreferenceConverterBase<LocalDateTime, DateTime?, object>
+    {
+        protected override DateTime? Convert(LocalDateTime value, object parameter, CultureInfo culture)
+            => value.ToDateTimeUnspecified();
+
+        protected override LocalDateTime ConvertBack(DateTime? value, object parameter, CultureInfo culture)
+            => value.HasValue
+                ? LocalDateTime.FromDateTime(value.Value)
+                : new LocalDateTime();
     }
 
     public class OffsetConverter : PreferenceConverterBase<Offset>

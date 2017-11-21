@@ -17,6 +17,8 @@
             <local:LocalTimeConverter x:Key="LocalTime" />
             <local:OffsetConverter x:Key="Offset" />
             <local:DateTimeZoneConverter x:Key="DateTimeZone" />
+            <local:LocalTimeToDateTimeConverter x:Key="LocalTimeToDateTime" />
+            <BooleanToVisibilityConverter x:Key="CollapseIfFalse" />
         </ResourceDictionary>
     </Window.Resources>
     
@@ -49,26 +51,23 @@
                 </DataTemplate>
 
                 <DataTemplate DataType="{x:Type local:TimeInstanceModel}">
-                    <Grid>
+                    <Grid Margin="0,2,0,2">
                         <Grid.RowDefinitions>
                             <RowDefinition />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition SharedSizeGroup="DateTime" />
+                            <ColumnDefinition Width="200" SharedSizeGroup="DateTime" />
                             <ColumnDefinition Width="200"  SharedSizeGroup="TimeZone" />
                             <ColumnDefinition SharedSizeGroup="Offset" />
+                            <ColumnDefinition SharedSizeGroup="Remove" />
                         </Grid.ColumnDefinitions>
 
                         <xctk:DateTimePicker 
                             Margin="0,0,10,0"
-                            Value="{Binding LocalTime}"
+                            Format="Custom"
+                            FormatString="ddd, d MMM yyyy HH:mm:ss"
+                            Value="{Binding LocalTime, Converter={StaticResource LocalTimeToDateTime}}"
                             />
-
-                        <!--<TextBox
-                            TextAlignment="Right"
-                            Margin="0,0,10,0"
-                            Text="{Binding LocalTime, Converter={StaticResource LocalTime}}" 
-                            />-->
 
                         <ComboBox
                             Margin="0,0,10,0"
@@ -82,11 +81,18 @@
                             Grid.Column="2"
                             Text="{Binding LocalTimeOffset, Converter={StaticResource Offset}}" 
                             />
+
+                        <Button
+                            Grid.Column="3"
+                            Content="X"
+                            Visibility="{Binding IsRemovable, Converter={StaticResource CollapseIfFalse}}"
+                            Command="{Binding RemoveInstance}"
+                            />
                     </Grid>
                 </DataTemplate>
 
                 <DataTemplate DataType="{x:Type local:UtcInstanceModel}">
-                    <Grid>
+                    <Grid Margin="0,2,0,2">
                         <Grid.RowDefinitions>
                             <RowDefinition />
                         </Grid.RowDefinitions>
@@ -94,21 +100,24 @@
                             <ColumnDefinition SharedSizeGroup="DateTime" />
                             <ColumnDefinition SharedSizeGroup="TimeZone" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock
-                            TextAlignment="Right"
+                        
+                        <xctk:DateTimePicker 
                             Margin="0,0,10,0"
-                            Text="{Binding LocalTime, Converter={StaticResource LocalTime}}" 
+                            Format="Custom"
+                            FormatString="ddd, d MMM yyyy HH:mm:ss"
+                            Value="{Binding LocalTime, Converter={StaticResource LocalTimeToDateTime}}"
                             />
+                        
                         <TextBlock
                             Margin="0,0,10,0"
                             Grid.Column="1"
                             Text="UTC" 
                             />
                     </Grid>
-                </DataTemplate>                
-                
+                </DataTemplate>
+
                 <DataTemplate DataType="{x:Type local:EpochInstanceModel}">
-                    <Grid>
+                    <Grid Margin="0,2,0,2">
                         <Grid.RowDefinitions>
                             <RowDefinition />
                         </Grid.RowDefinitions>
@@ -116,15 +125,36 @@
                             <ColumnDefinition SharedSizeGroup="DateTime" />
                             <ColumnDefinition SharedSizeGroup="TimeZone" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock
-                            TextAlignment="Right"
+
+                        <xctk:LongUpDown 
                             Margin="0,0,10,0"
-                            Text="{Binding EpochSeconds}" 
+                            Value="{Binding EpochSeconds}"
                             />
+
                         <TextBlock
                             Margin="0,0,10,0"
                             Grid.Column="1"
                             Text="Epoch" 
+                            />
+                    </Grid>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type local:PlaceholderInstanceModel}">
+                    <Grid Margin="0,2,0,2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition SharedSizeGroup="DateTime" />
+                            <ColumnDefinition SharedSizeGroup="TimeZone" />
+                            <ColumnDefinition SharedSizeGroup="Offset" />
+                            <ColumnDefinition SharedSizeGroup="Remove" />
+                        </Grid.ColumnDefinitions>
+
+                        <Button
+                            Grid.Column="3"
+                            Content="Add"
+                            Command="{Binding AddNewInstance}"
                             />
                     </Grid>
                 </DataTemplate>
